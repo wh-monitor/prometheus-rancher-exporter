@@ -34,6 +34,7 @@ type Data struct {
 func (e *Exporter) processMetrics(data *Data, endpoint string, hideSys bool, ch chan<- prometheus.Metric) error {
 
 	// Used for backwards compatibility
+	log.Debug("Paras endpoint=%s",endpoint)
 	apiVer := getAPIVersion(rancherURL)
 
 	// Metrics - range through the data object
@@ -49,6 +50,8 @@ func (e *Exporter) processMetrics(data *Data, endpoint string, hideSys bool, ch 
 		if dataType == "" {
 			dataType = x.Type
 		}
+		
+		log.Debug("Paras dataType=%s",dataType)
 		if checkMetric(endpoint, dataType) == false {
 			continue
 		}
