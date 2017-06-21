@@ -45,6 +45,7 @@ func (e *Exporter) processMetrics(data *Data, endpoint string, hideSys bool, ch 
 			continue
 		}
 
+
 		// Checks the metric is of the expected type
 		dataType := x.BaseType
 		if dataType == "" {
