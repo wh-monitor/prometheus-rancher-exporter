@@ -64,6 +64,19 @@ func (e *Exporter) processMetrics(data *Data, endpoint string, hideSys bool, ch 
 				continue
 			}
 
+		} else if endpoint == "accounts" {
+
+			// only collect project(environment)
+			if (x.Type =="project"){
+				envRef = storeEnvRef(x.ID, x.Name)
+
+				if err := e.setEnvMetrics(x.ID,x.Name, x.State); err != nil {
+					log.Errorf("Error processing env metrics: %s", err)
+					log.Errorf("Attempt Failed to set %s, %s, %s, %s", x.ID,x.Name, x.State)
+					continue
+				}
+			}
+
 		} else if endpoint == "stacks" {
 
 			// Used to create a map of stackID and stackName
@@ -222,3 +235,28 @@ func retrieveStackRef(stackID string) string {
 	// returns unknown if no match was found
 	return "unknown"
 }
+
+
+// add by xiehq envRef stores the environment information 
+func storeEnvReff(ID string, name string) map[string]string {
+
+	envRef[ID] = name
+
+	return stackRef
+}
+
+// retrieveStackRef returns the stack name, when sending the stackID
+func retrieveEnvRef(envID string) string {
+
+	for key, value := range envRef {
+		if envID == "" {
+			return "unknown"
+		} else if stackID == key {
+			log.Debugf("envRef - Key is %s, Value is %s envID is %s", key, value, envID)
+			return value
+		}
+	}
+	// returns unknown if no match was found
+	return "unknown"
+}
+

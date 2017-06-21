@@ -35,8 +35,13 @@ var (
 	stackStates   = []string{"activating", "active", "canceled_upgrade", "canceling_upgrade", "error", "erroring", "finishing_upgrade", "removed", "removing", "requested", "restarting", "rolling_back", "updating_active", "upgraded", "upgrading"}
 	serviceStates = []string{"activating", "active", "canceled_upgrade", "canceling_upgrade", "deactivating", "finishing_upgrade", "inactive", "registering", "removed", "removing", "requested", "restarting", "rolling_back", "updating_active", "updating_inactive", "upgraded", "upgrading"}
 	healthStates  = []string{"healthy", "unhealthy"}
-	endpoints     = []string{"stacks", "services", "hosts"} // EndPoints the exporter will trawl
+	
+	// add endponit -account  by xiehq @20170621
+	endpoints     = []string{"stacks", "services", "hosts","accounts"} // EndPoints the exporter will trawl
 	stackRef      = make(map[string]string)                 // Stores the StackID and StackName as a map, used to provide label dimensions to service metrics
+	//add envRef by by xiehq @20170621
+	accountStates  = []string{"active", "inactive"}
+
 	envRef      = make(map[string]string)                 // Stores the EnvId and name as a map, used to provide label if all metrics  add by xiehq
 
 )

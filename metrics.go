@@ -60,6 +60,14 @@ func addMetrics() map[string]*prometheus.GaugeVec {
 			Help:      "State of defined host agent as reported by the Rancher API",
 		}, []string{"name", "state","EnvironmentId"}) //add EnvironmentId
 
+	//  account ,add by xiehq
+	gaugeVecs["environmentState"] = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Namespace: "rancher",
+			Name:      ("environment_state"),
+			Help:      "State of defined environment as reported by the Rancher API",
+		}, []string{"name", "state","id"}) //add EnvironmentId
+
 	return gaugeVecs
 }
 
@@ -148,3 +156,18 @@ func (e *Exporter) setHostMetrics(name string, state, agentState string,Environm
 	}
 	return nil
 }
+
+//setEnvMetrics x.ID,x.Name, x.State) 
+//"name", "state","id"
+func (e *Exporter) setEnvMetrics(ID string,name string, state string) error {
+	for _, y := range stackStates {
+		if state == y {
+			e.gaugeVecs["environmentState"].With(prometheus.Labels{"name": name, "state": y, "id": ID}).Set(1)
+		} else {
+			e.gaugeVecs["environmentState"].With(prometheus.Labels{"name": name, "state": y, "id": ID}).Set(1)
+		}
+
+	}
+	return nil
+}
+
