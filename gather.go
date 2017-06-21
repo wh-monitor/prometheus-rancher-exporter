@@ -238,11 +238,11 @@ func retrieveStackRef(stackID string) string {
 
 
 // add by xiehq envRef stores the environment information 
-func storeEnvReff(ID string, name string) map[string]string {
+func storeEnvRef(ID string, name string) map[string]string {
 
 	envRef[ID] = name
 
-	return stackRef
+	return envRef
 }
 
 // retrieveStackRef returns the stack name, when sending the stackID
@@ -251,7 +251,7 @@ func retrieveEnvRef(envID string) string {
 	for key, value := range envRef {
 		if envID == "" {
 			return "unknown"
-		} else if stackID == key {
+		} else if envID == key {
 			log.Debugf("envRef - Key is %s, Value is %s envID is %s", key, value, envID)
 			return value
 		}
