@@ -58,10 +58,14 @@ func (e *Exporter) processMetrics(data *Data, endpoint string, hideSys bool, ch 
 		}
 
 		log.Debug("Processing metrics for %s", endpoint)
-
+		EnvironmentName :=""
+		if endpoint != "accounts" {
+		   EnvironmentName = retrieveEnvRef(x.EnvironmentId)
+		}
+		
 		if endpoint == "hosts" {
 
-			if err := e.setHostMetrics(x.HostName, x.State, x.AgentState,x.EnvironmentId); err != nil {
+			if err := e.setHostMetrics(x.HostName, x.State, x.AgentState,x.EnvironmentId,EnvironmentName); err != nil {
 				log.Errorf("Error processing host metrics: %s", err)
 				log.Errorf("Attempt Failed to set %s, %s, [agent] %s ", x.HostName, x.State, x.AgentState)
 
@@ -87,7 +91,7 @@ func (e *Exporter) processMetrics(data *Data, endpoint string, hideSys bool, ch 
 			// Later used as a dimension in service metrics
 			stackRef = storeStackRef(x.ID, x.Name)
 
-			if err := e.setStackMetrics(x.Name, x.State, x.HealthState, strconv.FormatBool(x.System),x.EnvironmentId); err != nil {
+			if err := e.setStackMetrics(x.Name, x.State, x.HealthState, strconv.FormatBool(x.System),x.EnvironmentId,EnvironmentName); err != nil {
 				log.Errorf("Error processing stack metrics: %s", err)
 				log.Errorf("Attempt Failed to set %s, %s, %s, %s", x.Name, x.State, x.HealthState, x.System)
 				continue
@@ -107,13 +111,13 @@ func (e *Exporter) processMetrics(data *Data, endpoint string, hideSys bool, ch 
 				log.Warnf("Failed to obtain stack_name for %s from the API", x.Name)
 			}
 
-			if err := e.setServiceMetrics(x.Name, stackName, x.State, x.HealthState, x.Scale,x.EnvironmentId); err != nil {
+			if err := e.setServiceMetrics(x.Name, stackName, x.State, x.HealthState, x.Scale,x.EnvironmentId,EnvironmentName); err != nil {
 				log.Errorf("Error processing service metrics: %s", err)
 				log.Errorf("Attempt Failed to set %s, %s, %s, %s, %d", x.Name, stackName, x.State, x.HealthState, x.Scale)
 				continue
 			}
 
-			e.setServiceMetrics(x.Name, stackName, x.State, x.HealthState, x.Scale,x.EnvironmentId)
+			//e.setServiceMetrics(x.Name, stackName, x.State, x.HealthState, x.Scale,x.EnvironmentId,EnvironmentName)
 		}
 
 	}
@@ -130,7 +134,8 @@ func (e *Exporter) gatherData(rancherURL string, accessKey string, secretKey str
 
 	// Create new data slice from Struct
 	var data = new(Data)
-
+	log.Debugf("JSON Fetched for :",url)
+	
 	// Scrape EndPoint for JSON Data
 	err := getJSON(url, accessKey, secretKey, &data)
 	if err != nil {
@@ -184,6 +189,8 @@ func setEndpoint(rancherURL string, component string, apiVer string) string {
 		endpoint = (rancherURL + "/services/")
 	} else if strings.Contains(component, "hosts") {
 		endpoint = (rancherURL + "/hosts/")
+	}  else if strings.Contains(component, "accounts") { //add accounts by xiehq
+		endpoint = (rancherURL + "/accounts/")
 	} else if strings.Contains(component, "stacks") {
 
 		if apiVer == "v1" {

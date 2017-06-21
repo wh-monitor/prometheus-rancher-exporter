@@ -32,7 +32,9 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 
 	// Range over the pre-configured endpoints array
 	for _, p := range endpoints {
-
+		
+		log.Debug("endpoints",p)
+		
 		var data, err = e.gatherData(e.rancherURL, e.accessKey, e.secretKey, p, ch)
 
 		if err != nil {
