@@ -37,7 +37,7 @@ var (
 	healthStates  = []string{"healthy", "unhealthy"}
 	
 	// add endponit -account  by xiehq @20170621
-	endpoints     = []string{"stacks", "services", "hosts", "accounts" } // EndPoints the exporter will trawl
+	endpoints     = []string{"accounts","stacks", "services", "hosts"} // EndPoints the exporter will trawl
 	stackRef      = make(map[string]string)                 // Stores the StackID and StackName as a map, used to provide label dimensions to service metrics
 	//add envRef by by xiehq @20170621
 	envStates  = []string{"active", "inactive"}
